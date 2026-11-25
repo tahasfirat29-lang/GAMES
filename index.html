@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#f6c86b">
+  <title>Bunny Cactus Run 🐰🌵</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="theme-day">
+  <div id="app">
+    <div id="game-shell">
+      <canvas id="gameCanvas" width="960" height="540" aria-label="Bunny Cactus Run game"></canvas>
+
+      <!-- ===== HUD (visible while playing) ===== -->
+      <div id="hud" class="hud hidden">
+        <div class="hud-left">
+          <div class="hud-chip">
+            <span class="chip-label">SCORE</span>
+            <span id="scoreValue" class="chip-value">0</span>
+          </div>
+          <div class="hud-chip hud-chip--small">
+            <span class="chip-label">BEST</span>
+            <span id="hudBestValue" class="chip-value">0</span>
+          </div>
+        </div>
+        <div class="hud-right">
+          <div id="levelBadge" class="level-badge">LV 1</div>
+          <button id="pauseBtn" class="icon-btn" aria-label="Pause" title="Pause (P / Esc)">
+            <span class="pause-glyph"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ===== MAIN MENU ===== -->
+      <section id="menuScreen" class="screen screen--menu active">
+        <div class="menu-content">
+          <div class="title-wrap">
+            <h1 class="game-title"><span class="title-bunny">BUNNY</span><span class="title-cactus">CACTUS</span><span class="title-run">RUN</span></h1>
+            <p class="tagline">Hop. Dodge. Repeat. 🐰🌵</p>
+          </div>
+          <div class="menu-buttons">
+            <button id="playBtn" class="btn btn--primary btn--play">
+              <span class="btn-play-triangle"></span> PLAY
+            </button>
+            <button id="settingsBtn" class="btn btn--secondary">⚙ SETTINGS</button>
+            <button id="howBtn" class="btn btn--secondary">? HOW TO PLAY</button>
+          </div>
+          <div class="best-line">Best Score: <strong id="menuBestValue">0</strong></div>
+        </div>
+        <div class="menu-hint">Press <kbd>SPACE</kbd> / <kbd>↑</kbd> or tap to jump</div>
+      </section>
+
+      <!-- ===== PAUSE SCREEN ===== -->
+      <section id="pauseScreen" class="screen screen--overlay">
+        <div class="panel">
+          <div class="panel-emoji">⏸️</div>
+          <h2 class="panel-title">PAUSED</h2>
+          <p class="panel-sub">Take a breather, little bunny.</p>
+          <div class="panel-buttons">
+            <button id="resumeBtn" class="btn btn--primary">▶ RESUME</button>
+            <button id="pauseRestartBtn" class="btn btn--secondary">↻ RESTART</button>
+            <button id="pauseMenuBtn" class="btn btn--ghost">⌂ MAIN MENU</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== GAME OVER SCREEN ===== -->
+      <section id="gameOverScreen" class="screen screen--overlay">
+        <div class="panel panel--over">
+          <div class="panel-emoji">💥</div>
+          <h2 class="panel-title panel-title--over">GAME OVER</h2>
+          <div class="score-board">
+            <div class="score-box">
+              <span class="score-box-label">SCORE</span>
+              <span id="finalScore" class="score-box-value">0</span>
+            </div>
+            <div class="score-box score-box--best">
+              <span class="score-box-label">BEST</span>
+              <span id="finalBest" class="score-box-value">0</span>
+            </div>
+          </div>
+          <div id="newBestTag" class="new-best hidden">★ NEW BEST! ★</div>
+          <div class="panel-buttons">
+            <button id="restartBtn" class="btn btn--primary">↻ RESTART</button>
+            <button id="overMenuBtn" class="btn btn--ghost">⌂ MAIN MENU</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SETTINGS SCREEN ===== -->
+      <section id="settingsScreen" class="screen screen--overlay">
+        <div class="panel panel--settings">
+          <h2 class="panel-title">SETTINGS</h2>
+          <div class="setting-row">
+            <div class="setting-info">
+              <span class="setting-name">🎵 Music</span>
+              <span class="setting-desc">Background tune</span>
+            </div>
+            <button id="musicToggle" class="toggle" role="switch" aria-checked="true"><span class="toggle-knob"></span></button>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <span class="setting-name">🔊 Volume</span>
+              <span class="setting-desc">Sound effects &amp; music</span>
+            </div>
+            <div class="volume-wrap">
+              <input id="volumeSlider" type="range" min="0" max="100" value="60" aria-label="Volume">
+              <span id="volumeValue" class="volume-value">60%</span>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <span class="setting-name">🌗 Theme</span>
+              <span class="setting-desc">Day or night mode</span>
+            </div>
+            <button id="themeToggle" class="toggle toggle--theme" role="switch" aria-checked="false"><span class="toggle-knob"></span><span class="toggle-icon">☀️</span></button>
+          </div>
+          <div class="panel-buttons">
+            <button id="settingsBackBtn" class="btn btn--primary">← BACK</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== HOW TO PLAY SCREEN ===== -->
+      <section id="howScreen" class="screen screen--overlay">
+        <div class="panel panel--how">
+          <h2 class="panel-title">HOW TO PLAY</h2>
+          <div class="how-list">
+            <div class="how-item"><span class="how-icon">🐰</span><div><strong>Run &amp; Jump</strong><p>The bunny runs automatically. Tap or press a key to hop over cacti.</p></div></div>
+            <div class="how-item"><span class="how-icon">🌵</span><div><strong>Dodge Cacti</strong><p>Colliding with a cactus ends the run. Time your jumps!</p></div></div>
+            <div class="how-item"><span class="how-icon">⭐</span><div><strong>Score Points</strong><p>Every cactus you clear earns 1 point. The game speeds up over time.</p></div></div>
+            <div class="how-item"><span class="how-icon">⚡</span><div><strong>Controls</strong><p><kbd>Space</kbd>, <kbd>↑</kbd>, <kbd>W</kbd>, mouse click, or touch to jump. <kbd>P</kbd>/<kbd>Esc</kbd> to pause.</p></div></div>
+          </div>
+          <div class="panel-buttons">
+            <button id="howBackBtn" class="btn btn--primary">← BACK</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer-note">Made with ♥ · Pure HTML5 Canvas · No external assets</div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/input.js"></script>
+  <script src="js/entities.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
